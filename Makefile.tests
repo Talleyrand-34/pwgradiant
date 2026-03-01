@@ -1,0 +1,38 @@
+# Test individual files
+test-database:
+	go test -v -run "^Test" ./database_test.go ./database.go
+
+test-models:
+	go test -v -run "^Test" ./models_test.go ./models.go
+
+test-repository:
+	go test -v -run "^Test" ./repository_test.go ./repository.go ./models.go ./database.go
+
+test-api:
+	go test -v -run "^Test" ./api_test.go ./api.go ./repository.go ./models.go ./database.go
+
+test-cli:
+	go test -v -run "^Test" ./cli_test.go ./cli.go ./repository.go ./models.go ./database.go
+
+# Run all tests
+test-all:
+	@echo "Running all tests..."
+	@go test -v ./...
+	@echo ""
+	@echo "Cleaning up test databases..."
+	@rm -f test_*.db
+
+# Run tests with coverage
+test-coverage:
+	go test -v -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+	@echo "Coverage report generated: coverage.html"
+
+# Quick test (no verbose output)
+test:
+	@go test ./...
+
+# Clean test artifacts
+test-clean:
+	rm -f test_*.db
+	rm -f coverage.out coverage.html
