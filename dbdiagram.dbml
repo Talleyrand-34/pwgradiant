@@ -1,0 +1,84 @@
+Table account {
+  id        integer [pk]
+  email     varchar [null, default: null]
+  user      varchar [not null]
+  password  varchar [not null]
+  url       varchar [null, default: null]
+  notes     varchar [null, default: null]
+  expire    timestamp [not null, default: CURRETTIMETIME]
+}
+
+Table tag {
+  id    integer [pk]
+  name  varchar [unique, not null]
+}
+
+Table tag_association {
+  account_id integer [not null]
+  tag_id     integer [not null]
+
+  indexes {
+    (account_id, tag_id) [pk]
+  }
+}
+
+Table totp {
+  id         integer [pk]
+  account_id integer [not null, ref: > account.id]
+  totp_seed  varchar [not null]
+}
+
+//////////////////////////////////////////////////////
+// Tablas de histórico / versionado
+//////////////////////////////////////////////////////
+
+Table account_history {
+  history_id    integer [pk]
+  account_id    integer [null, default: null]
+  email         varchar [null, default: null]
+  user          varchar [null, default: null]
+  password      varchar [null, default: null]
+  url           varchar [null, default: null]
+  notes         varchar [null, default: null]
+  expire        timestamp [null, default: null]
+
+  valid_from    timestamp [not null, default: CURRENTDATETIME]
+  valid_to      timestamp [not null, default: CURRENTDATETIME]
+  change_reason varchar [null, default: null] // opcional: motivo del cambio
+}
+
+Table tag_association_history {
+  account_id    integer [not null]
+  tag_id        integer [not null]
+
+  valid_from    timestamp [not null, default: DEFAULTDATETIME]
+  valid_to      timestamp [not null, default: DEFAULTDATETIME]
+
+  indexes {
+    (account_id, tag_id) [pk]
+  }
+}
+
+Table totp_history {
+  history_id    integer [pk]
+  totp_id       integer [not null]
+  totp_seed     varchar [not null]
+
+  valid_from    timestamp [not null, default: CURRENTDATETIME]
+  valid_to      timestamp [not null, default: CURRENTDATETIME]
+}
+
+//////////////////////////////////////////////////////
+// Relaciones
+//////////////////////////////////////////////////////
+
+// Relaciones originales
+Ref: account.id < tag_association.account_id
+Ref: tag.id < tag_association.tag_id
+//Ref: account.id < totp.id
+
+// Histórico: cada versión apunta al registro "vivo"
+Ref: account.id < account_history.account_id
+Ref: account.id < tag_association_history.account_id
+Ref: tag.id < tag_association_history.tag_id
+Ref: totp.id < totp_history.totp_id
