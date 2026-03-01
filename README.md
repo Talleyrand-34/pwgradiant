@@ -12,6 +12,7 @@ A secure password manager using SQLCipher encryption, with both REST API and CLI
 - ✅ Full history tracking for accounts
 - ✅ Search functionality
 - ✅ Go structs mapped to database with JSON export
+- ✅ Homomorphic encryption for TOTP private generation without RAM leakage and future stealing bulletproof
 
 ## Installation
 
@@ -23,6 +24,10 @@ A secure password manager using SQLCipher encryption, with both REST API and CLI
 #### Install SQLCipher (Ubuntu/Debian)
 ```bash
 sudo apt-get install libsqlcipher-dev
+```
+#### Install SQLCipher (Fedora/RHEL)
+```bash
+sudo dnf install sqlcipher
 ```
 
 #### Install SQLCipher (macOS)
